@@ -1,0 +1,55 @@
+static void ObliczSredniaHarmonicznaCiagu()
+{
+    Console.Clear(); // Czyszczenie ekranu przed rozpoczęciem obliczeń
+    Console.WriteLine("\n\n\t\tObliczenie średniej harmonicznej wyrazów ciągu liczbowego");
+
+    List<double> liczby = new List<double>();
+    bool poprawneDane = false;
+
+    // Pętla powtarzająca się do momentu, gdy użytkownik wprowadzi poprawne dane
+    while (!poprawneDane)
+    {
+        Console.WriteLine("\n\t\tPodaj liczby oddzielone spacją (tylko wartości niezerowe): ");
+        string input = Console.ReadLine();
+        string[] tokens = input.Split(' ');
+        liczby.Clear();  // Wyczyść listę przy każdej próbie
+
+        poprawneDane = true; // Zakładamy, że dane będą poprawne
+
+        foreach (var token in tokens)
+        {
+            // Próba konwersji tekstu na liczbę
+            if (double.TryParse(token, out double liczba) && liczba != 0)
+            {
+                liczby.Add(liczba);
+            }
+            else
+            {
+                // Jeśli napotkamy błąd, ustawiamy flagę na false i wyświetlamy komunikat
+                Console.WriteLine("\n\t\tERROR: Nieprawidłowy format danych lub liczba zerowa. Spróbuj ponownie.");
+                poprawneDane = false;
+                
+                // Czekamy, aż użytkownik naciśnie dowolny klawisz, aby zobaczyć błąd
+                Console.Write("\n\t\tNaciśnij dowolny klawisz, aby spróbować ponownie...");
+                Console.ReadKey();
+
+                // Wyczyść ekran po błędzie
+                Console.Clear();
+                break; // Przerywamy sprawdzanie dalszych liczb i wracamy do początku pętli
+            }
+        }
+    }
+
+    // Jeśli udało się poprawnie pobrać dane, przechodzimy do obliczeń
+    double sumaOdwrotnosci = 0;
+    foreach (double liczba in liczby)
+    {
+        sumaOdwrotnosci += 1 / liczba;
+    }
+
+    double sredniaHarmoniczna = liczby.Count / sumaOdwrotnosci;
+
+    Console.WriteLine($"\n\t\tŚrednia harmoniczna wynosi: {sredniaHarmoniczna}");
+    Console.Write("\n\t\tNaciśnij dowolny klawisz, aby kontynuować...");
+    Console.ReadKey();
+    Console.Clear();

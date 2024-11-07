@@ -1,0 +1,58 @@
+static void ObliczSredniaKwadratowaCiagu()
+        {
+            Console.Clear(); // Wyczyszczenie ekranu przed rozpoczęciem
+            Console.WriteLine("\n\n\t\tObliczenie średniej kwadratowej wyrazów ciągu liczbowego");
+
+            List<double> liczby = new List<double>(); // Lista do przechowywania poprawnych liczb
+            bool poprawneDane = false; // Flaga kontrolująca poprawność danych
+
+            // Pętla, która trwa, dopóki użytkownik nie poda poprawnych danych
+            while (!poprawneDane)
+            {
+                Console.WriteLine("\n\t\tPodaj liczby oddzielone spacją (dowolne wartości): ");
+                string input = Console.ReadLine(); // Pobranie danych od użytkownika
+                string[] tokens = input.Split(' '); // Rozdzielenie tekstu na liczby za pomocą spacji
+                liczby.Clear();  // Wyczyść listę przed każdą próbą
+
+                poprawneDane = true; // Zakładamy, że dane są poprawne (do wykrycia błędu)
+
+                // Iteracja przez każdy element wpisany przez użytkownika
+                foreach (var token in tokens)
+                {
+                    // Próba konwersji tekstu na liczbę bez sprawdzania znaku
+                    if (double.TryParse(token, out double liczba))
+                    {
+                        liczby.Add(liczba); // Dodajemy poprawną liczbę do listy
+                    }
+                    else
+                    {
+                        // Jeśli wystąpi błąd, ustawiamy `poprawneDane` na false i wyświetlamy komunikat
+                        Console.WriteLine("\n\t\tERROR: Wprowadziłeś nieprawidłowy format danych. Spróbuj ponownie.");
+                        poprawneDane = false;
+
+                        // Czekamy, aż użytkownik naciśnie dowolny klawisz
+                        Console.Write("\n\t\tNaciśnij dowolny klawisz, aby spróbować ponownie...");
+                        Console.ReadKey();
+
+                        // Wyczyszczenie ekranu przed ponownym wpisywaniem
+                        Console.Clear();
+                        break; // Przerywamy sprawdzanie dalszych liczb i wracamy do początku pętli
+                    }
+                }
+            }
+
+            // Po uzyskaniu poprawnych danych przystępujemy do obliczeń
+            double sumaKwadratow = 0;
+            foreach (double liczba in liczby)
+            {
+                sumaKwadratow += Math.Pow(liczba, 2); // Dodajemy kwadrat każdej liczby do sumy
+            }
+
+            // Obliczanie średniej kwadratowej
+            double sredniaKwadratowa = Math.Sqrt(sumaKwadratow / liczby.Count);
+
+            Console.WriteLine($"\n\t\tŚrednia kwadratowa wynosi: {sredniaKwadratowa}"); // Wyświetlanie wyniku
+            Console.Write("\n\t\tNaciśnij dowolny klawisz, aby kontynuować...");
+            Console.ReadKey(); // Oczekiwanie na klawisz przed zakończeniem
+            Console.Clear(); // Czyszczenie ekranu po zakończeniu funkcji
+        }
