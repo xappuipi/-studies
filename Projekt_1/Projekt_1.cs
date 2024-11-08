@@ -4,7 +4,7 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
-using Projekt1_Mickiewicz71500;
+using Projekt1_Kumszczynski71523;
 
 
 /*
