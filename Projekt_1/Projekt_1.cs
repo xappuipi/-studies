@@ -12,6 +12,9 @@ namespace Projekt1
     {
         public static void Main(string[] args)
         {
+            //var tmKI = new tmKalkulatorIndywidualny();
+            //Console.WriteLine(tmKI.tmSGeometryczna());
+
             //Deklaracje zmiennych
             ConsoleKeyInfo wybranaFunkcjonalnosc;   
 
@@ -182,7 +185,56 @@ namespace Projekt1
                         Console.WriteLine("\n\n\t\tWybrana zostala funkcjonalnosc: " +
                             "B: Obliczanie wartosci wielomianu n-tego stopnia");
 
-                        obliczanieWielomianuN();
+                        /*zalozenia projektowe:
+                         * 1. dane wejsciowe: (ich kolejnosc wczytywania i typ danych)
+                         *  - n stopien wielomianu: liczba natualna (typ ushort)
+                         *  - x wartosc zmiennej niezaleznej: liczba rzeczywista (typ float)
+                         *  - a0 a1 a2 . . . an - wspolczynnii wielomianu: liczby rzeczywiste (typ float)
+                         * 2. waruek wejsciowy: n >= 0
+                         * 3. wynik obliczen: w(x) = wartosc (typ float)  
+                         */
+
+                        //deklaracje zmiennych dla przechowania danych wejsciowych
+                        //ushort n;
+
+                        float x; //zmienna niezalezna
+                        //float a; //wspolczynnik wielomianu
+                        float wx; //watosc wielomianu
+
+                        //wczytanie danych wejsciowych
+                        n = wczytajLiczbeNaturalna("stopien wielomianu");
+                        //wczytanie wartosci zmiennej niezaleznej x
+                        wczytajLiczbeRzeczywista("wartosc zmiennej niezaleznej x", out x);
+
+                        //iteracyjne obliczanie wartosci wielomianu wg 'schematu hornera'
+                        wx = 0.0F; //poczatkowy stan obliczen
+                        string textZaproszenia; //dla zredagowania zaproszenia do poadania a
+                        //iteracyjne obliczanie wartosci wielomianu
+                        for (int i = 0; i <= n; i++)
+                        {
+                            textZaproszenia = string.Format("wartosc {0}-tego wspolczynnika wielomianu", i);
+                            //wczytanie wartosci i-tego wspolczynnika
+                            wczytajLiczbeRzeczywista($"wartosc {i}-tego wspolczynnika wielomianu", out a); //uzywanie formated sring za pomoca znaku $
+                                                                                                           //poniewaz jest bardziej czytelne
+                                                                                                           //i nie zajmuje miajsca w pamieci na niepotrzebne zmienne
+                            //iteracyje obliczanie wielomianu
+                            wx = wx * x + a;
+                        }
+                        //wypisywanie wyniku obliczen
+                        //w formacie fixed-point 
+                        Console.WriteLine($"\n\n\t\tWyniki obliczen: obliczona wartosc wielomianu" +
+                            $"{n}-tego stopnia dla odanych wartosci \n\t\t\twspolczynnikow" +
+                            $"jest rowna W(x) = {wx, 6:F3}");
+
+                        //w formacie wykladniczym
+                        Console.WriteLine($"\n\n\t\tWyniki obliczen: obliczona wartosc wielomianu" +
+                            $"{n}-tego stopnia dla odanych wartosci \n\t\t\twspolczynnikow" +
+                            $"jest rowna W(x) = {wx,6:E2}");
+
+                        //w formacie domyslnym
+                        Console.WriteLine($"\n\n\t\tWyniki obliczen: obliczona wartosc wielomianu" +
+                            $"{n}-tego stopnia dla odanych wartosci \n\t\t\twspolczynnikow" +
+                            $"jest rowna W(x) = {wx,6:G}");
 
                         break;
 
@@ -191,7 +243,22 @@ namespace Projekt1
                         Console.WriteLine("\n\n\t\tWybrana zostala funkcjonalnosc: " +
                             "C: Konwersja znakowego zapisu liczby na jej wartosc");
 
-                        konwersjaLiczby();
+                        //123 = 10^2 * 1 + 10^1 * 2 + 10^0 * 3
+
+                        //deklaracje zmiennych
+                        ushort wczytanaWartoscLiczby;
+
+                        //znakowe wczytanie liczby dziesietnej i jej konwersja na wartosc
+                        znakoweWczytanieLiczbyNaturalnej("liczba naturalna (od 0 do 65535)", out wczytanaWartoscLiczby);
+
+                        //deklaracja pomocnicza
+                        string znakowyZapisLiczbyPoKonwersji;
+                        //konwersja liczby naturalnej na zapis znakowy
+                        KonwersjaLiczbyNaturalnejNaZapisZnakowy(wczytanaWartoscLiczby, out znakowyZapisLiczbyPoKonwersji);
+
+                        //wypisanie wyniku konwersji
+                        Console.WriteLine($"\n\n\t\tWynik Konwersji: wczytana liczba naturalna: {wczytanaWartoscLiczby} jest rownowazna" +
+                            $"liczbie w systemie dwojkowym: {znakowyZapisLiczbyPoKonwersji}");
 
 
                         break;
@@ -240,7 +307,6 @@ namespace Projekt1
         //deklaracja nowego regionu
         #region Deklaracje matod na poczet kalkulatora leboratoryjnego
 
-
         static ushort wczytajLiczbeNaturalna(string textZaproszenia)
         {
             //deklaracja zmiennej
@@ -274,6 +340,78 @@ namespace Projekt1
             }
         }
 
+        //metody instrukcyjne i funkcyjne
+
+        static void znakoweWczytanieLiczbyNaturalnej(string textZaproszenia, out ushort l)
+        {
+            //deklaracje
+            int N; //licznik cyfr
+            byte p = 10; //podstawa systemu liczbowego
+            string ZZL; //ZZL-(znakowy zapis liczby)
+            char cyfra; //pomocnicza zmienna dla pojedynczej cyfry
+
+            //wypisanie zaproszenia do podania liczby
+            Console.WriteLine("\n\t\tPodaj "+ textZaproszenia + ": ");
+            //znakowe wczytanie liczby
+            ZZL = Console.ReadLine();
+            //usuniecie ewentualnych tzw. bialych znakow
+            ZZL = ZZL.Trim();
+            //teraz moge odczytac liczbe znakow w ZZL
+            N = ZZL.Length;
+
+            //konwersja znakowego zapisu liczby na wartosc wg schamatu hornera
+            l = 0;
+            //iteracyjne obliczanie wartosci wartosci liczby z ZZL
+            for (int i = 0; i < N; i++)
+            {
+                //pobranie i-tej cyfry
+                cyfra = ZZL[i];
+                //sprawdzenie czy jest to cyfra w dziesietnym systemie liczbowym
+                if(cyfra >= '0' && cyfra <= '9')
+                    l =(ushort)( l * p + ((byte)cyfra - (byte)'0')); 
+                else
+                {
+                    Console.WriteLine($"\n\n\t\tERROR: w podanym zapisie liczby do konwersji" +
+                        $"wystapil niedozwolony znak {cyfra}, nie jest to cyfra" +
+                        $"w dziesietnym systemie liczbowym");
+                    //przerwanie konwersji bo nie ma ona sensu
+                    l = 0; //wyslanie domyslnej wartosci liczby w przypadku bledu
+                    return; //lub break;
+                }
+
+            }
+        }
+
+        static void KonwersjaLiczbyNaturalnejNaZapisZnakowy(ushort liczba, out string ZZLPoKonw)
+        {
+            //deklaracje
+            const ushort q = 2;
+            ushort licznik = 0; //licznik reszt
+            string schowekReszt = "";
+            byte reszta;
+
+            //iteracyjne wyznaczanie reszt z dzielenia % q
+            while (liczba > 0)
+            {
+                //obliczanie reszty
+                reszta = (byte)(liczba % q);
+                //dodanie reszty do schowka reszt
+                schowekReszt += (char)(reszta + (byte)'0');
+                //dzielenie calkowite
+                liczba = (ushort)(liczba / q);
+                //zwiekszanie licznika reszt
+                licznik++;
+
+            }
+
+            //ustalenie poczatkowego stanu dla odwrocenia cyfr reszt ze schowka
+            ZZLPoKonw = "";
+            //odwrocenie reszt
+            for (int i = licznik - 1; i >= 0; i--)
+            {
+                ZZLPoKonw += schowekReszt[i];
+            }
+        }
 
         static long silnia(int i)
         {
@@ -285,87 +423,6 @@ namespace Projekt1
 
 
         #endregion
-        
-        static void obliczanieWielomianuN()
-        {
-            Console.WriteLine("\n\n\t\tObliczanie wartości wielomianu");
-            int stopien;
-
-            stopien = wczytajLiczbeNaturalna("stopień wielomianu");
-
-            float[] wspolczynniki = new float[stopien + 1];
-
-            for (int i = 0; i <= stopien; i++)
-            {
-                wczytajLiczbeRzeczywista($"wspolczynnik przy potedze {i}", out wspolczynniki[i]);
-            }
-            float x;
-
-            wczytajLiczbeRzeczywista("wartość x", out x);
-            double wynik = 0;
-
-            for (int i = 0; i <= stopien; i++)
-            {
-                wynik += wspolczynniki[i] * Math.Pow(x, i);
-            }
-
-            Console.WriteLine("\n\t\tWartość wielomianu wynosi: {0}", wynik);
-        }
-
-        static void konwersjaLiczby()
-        {
-            //tworzenie slownika w ktorym przechowywane sa odpowiadajace znakom cyfry
-
-            var asciiChars = new Dictionary<char, int>();
-
-            for(int i = (int)'0'; i <= (int)'9'; i++)
-            {
-                asciiChars.Add((char)i, i - (int)'0');
-            }
-
-            //pobeiranie liczby w formacie string
-            Console.Write("\n\n\t\tPodaj liczbe w formacie string");
-            Console.Write("\n\t\t\t"); var liczbaString = Console.ReadLine();
-
-            //konwersja znakowego zapisu na liczbowy
-            //mozna to zrobic za pomoca int.Parse() 
-            //ale tutaj jest sposob jak to zrobic recznie
-
-            //zmienna ponizej bedzie mnozona przez 10 zeby uzyskac kolejne cyfry a nie dodawac do cyfr jednosci
-            int stopien = 1;
-
-            //petla w ktorej kolejne cyfry od prawej beda mnozone przez powyzsza zmienna i dodawane do zmiennej wynik
-            int wynik = 0;
-            for (int i = liczbaString.Length - 1; i >= 0; i--)
-            {
-                wynik += asciiChars[liczbaString[i]] * stopien;
-                stopien *= 10;
-            }
-
-            //wypiwywanie wyniku operacji razem z typem zmiennej
-            Console.WriteLine($"\n\n\t\tWynik operacji to: {wynik}, wynik jest typu {wynik.GetType()}");
-
-        }
-
-
-        static void obliczanieSymboluNewtona()
-        {
-            int k;
-            int n;
-
-            do
-            {
-                n = wczytajLiczbeNaturalna("Podaj wartosc n (n>= 0) dla wyznaczenia wartosci symbolu newtona");
-                k = wczytajLiczbeNaturalna("Podaj wartosc k (k>= 0) dla wyznaczenia wartosci symbolu newtona");
-
-            } while (!(0 <= k) && (k <= n));
-
-            var symbolNewtona = (int)((silnia(n)) / (silnia(k) * silnia(n - k)));
-
-            Console.WriteLine($"\n\n\t\tWYNIKI OBLICZEN: obliczona wartosc symbolu newtona dla podanego n: {n} oraz k: {k}" +
-                $"jest rowna: \n\t\t\t\twartosc symbolu newtona: {symbolNewtona}");
-        }
-
-        #endregion
-    };
+    }
+    
 }
